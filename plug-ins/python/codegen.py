@@ -148,7 +148,7 @@ class PyRenderer(ObjRenderer) :
 		ObjRenderer.end_render(self)
 
 
-# Still needs debugging - consider broken currently
+# Still needs debugging - consider broken currently 
 class RubyRenderer(ObjRenderer) : 
 	def __init__(self) :
 		ObjRenderer.__init__(self)
