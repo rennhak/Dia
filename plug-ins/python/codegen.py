@@ -147,6 +147,76 @@ class PyRenderer(ObjRenderer) :
 		f.close()
 		ObjRenderer.end_render(self)
 
+
+# Still needs debugging - consider broken currently
+class RubyRenderer(ObjRenderer) : 
+	def __init__(self) :
+		ObjRenderer.__init__(self)
+	def end_render(self) :
+		f = open(self.filename, "w")
+		for sk in self.klasses.keys() :
+			parents = self.klasses[sk].parents + self.klasses[sk].templates
+			if not parents:
+				f.write ("class %s\n" % (sk,))
+			else:
+				f.write ("class %s < %s\n" % (sk,", ".join(parents)))
+			k = self.klasses[sk]
+			if len(k.comment) > 0 :
+				f.write ("\t#" + k.comment + "\n")
+			f.write ("\tdef initialize\n")
+			for sa, attr in k.attributes :
+				value = attr[2] == "" and "None" or attr[2]
+				f.write("\t\t%s = %s # %s\n" % (sa, value, attr[0]))
+			else :
+				f.write("\t\tcontinue\n")
+			for so, op in k.operations :
+				# we only need the parameter names
+				pars = "self"
+				for p in op[2] :
+					pars = pars + ", " + p[0]
+				f.write("\tdef %s( %s )\n" % (so, pars))
+				if op[4]: f.write("\t\t\"\"\" %s \"\"\"\n" % op[4])
+				f.write("\t\t# returns %s\n" % (op[0], ))
+				f.write("\t\tpass\n")
+		f.close()
+		ObjRenderer.end_render(self)
+
+
+# Still needs debugging - consider broken currently
+class RubyYAMLRenderer(ObjRenderer) : 
+	def __init__(self) :
+		ObjRenderer.__init__(self)
+	def end_render(self) :
+		f = open(self.filename, "w")
+		for sk in self.klasses.keys() :
+			parents = self.klasses[sk].parents + self.klasses[sk].templates
+			if not parents:
+				f.write ("class %s\n" % (sk,))
+			else:
+				f.write ("class %s < %s\n" % (sk,", ".join(parents)))
+			k = self.klasses[sk]
+			if len(k.comment) > 0 :
+				f.write ("\t#" + k.comment + "\n")
+			f.write ("\tdef initialize\n")
+			for sa, attr in k.attributes :
+				value = attr[2] == "" and "None" or attr[2]
+				f.write("\t\t%s = %s # %s\n" % (sa, value, attr[0]))
+			else :
+				f.write("\t\tcontinue\n")
+			for so, op in k.operations :
+				# we only need the parameter names
+				pars = "self"
+				for p in op[2] :
+					pars = pars + ", " + p[0]
+				f.write("\tdef %s( %s )\n" % (so, pars))
+				if op[4]: f.write("\t\t\"\"\" %s \"\"\"\n" % op[4])
+				f.write("\t\t# returns %s\n" % (op[0], ))
+				f.write("\t\tpass\n")
+		f.close()
+		ObjRenderer.end_render(self)
+
+
+
 class CxxRenderer(ObjRenderer) :
 	def __init__(self) :
 		ObjRenderer.__init__(self)
@@ -460,3 +530,8 @@ dia.register_export ("PyDia Code Generation (Python)", "py", PyRenderer())
 dia.register_export ("PyDia Code Generation (C++)", "cxx", CxxRenderer())
 dia.register_export ("PyDia Code Generation (Pascal)", "pas", PascalRenderer())
 dia.register_export ("PyDia Code Generation (Java)", "java", JavaRenderer())
+
+dia.register_export ("PyDia Code Generation (Ruby)", "ruby", RubyRenderer())
+dia.register_export ("PyDia Code Generation (Ruby YAML)", "rubyyaml", RubyYAMLRenderer())
+
+
